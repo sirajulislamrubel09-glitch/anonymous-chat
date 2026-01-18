@@ -1,39 +1,41 @@
 :root{
   --bg0:#050814;
   --bg1:#070b1a;
+
+  --text:#eaf0ff;
+  --muted: rgba(234,240,255,.72);
+  --muted2: rgba(234,240,255,.50);
+
   --surface: rgba(255,255,255,.06);
   --surface2: rgba(255,255,255,.08);
   --stroke: rgba(255,255,255,.10);
-
-  --text:#eaf0ff;
-  --muted: rgba(234,240,255,.70);
-  --muted2: rgba(234,240,255,.50);
 
   --accent:#8b5cf6;
   --accent2:#22d3ee;
 
   --danger:#ef4444;
+  --shadow: 0 20px 60px rgba(0,0,0,.55);
 
   --r12:12px;
   --r16:16px;
   --r20:20px;
   --r24:24px;
-
-  --shadow: 0 20px 60px rgba(0,0,0,.55);
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
-html{height:100%}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ height:100%; }
+
 body{
   min-height:100%;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1200px 700px at 30% -10%, rgba(139,92,246,.22), transparent 60%),
-              radial-gradient(900px 600px at 90% 0%, rgba(34,211,238,.18), transparent 55%),
-              linear-gradient(180deg, var(--bg0), var(--bg1));
   color: var(--text);
+  background:
+    radial-gradient(1200px 700px at 30% -10%, rgba(139,92,246,.22), transparent 60%),
+    radial-gradient(900px 600px at 90% 0%, rgba(34,211,238,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
 }
 
-/* App frame (mobile safe) */
+/* Mobile-safe app frame */
 .app{
   height: 100vh;
   height: 100dvh;
@@ -43,7 +45,6 @@ body{
   padding: 14px;
 }
 
-/* Card */
 .container{
   width:100%;
   max-width: 540px;
@@ -58,7 +59,7 @@ body{
 
   display:flex;
   flex-direction:column;
-  min-height:0; /* important for inner scrolling */
+  min-height:0; /* critical */
 }
 
 /* Topbar */
@@ -88,17 +89,18 @@ body{
 
 .brand-text h1{
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 850;
   letter-spacing: -0.2px;
 }
+
 .tagline{
   font-size: 12px;
   color: var(--muted2);
   margin-top: 2px;
 }
 
-/* Status pill (your JS still uses #statusBar) */
-.status-pill{
+/* Status bar (JS resets className to "status-bar") */
+.status-bar{
   display:flex;
   align-items:center;
   gap:10px;
@@ -111,7 +113,7 @@ body{
   line-height: 1;
 }
 
-.status-pill .dot{
+.status-bar .dot{
   width: 8px;
   height: 8px;
   border-radius: 999px;
@@ -119,34 +121,33 @@ body{
   box-shadow: 0 0 0 3px rgba(255,255,255,.06);
 }
 
-/* keep your JS classes working: .connected and .waiting */
-.status-pill.connected{
+.status-bar.connected{
   border-color: rgba(34,211,238,.30);
   background: rgba(34,211,238,.08);
 }
-.status-pill.connected .dot{
+.status-bar.connected .dot{
   background: #22d3ee;
   box-shadow: 0 0 0 3px rgba(34,211,238,.12);
 }
 
-.status-pill.waiting{
+.status-bar.waiting{
   border-color: rgba(251,191,36,.28);
   background: rgba(251,191,36,.08);
 }
-.status-pill.waiting .dot{
+.status-bar.waiting .dot{
   background:#fbbf24;
   box-shadow: 0 0 0 3px rgba(251,191,36,.12);
 }
 
 .typing-indicator{
-  color: rgba(234,240,255,.75);
+  color: rgba(234,240,255,.78);
   font-style: italic;
   white-space: nowrap;
   animation: typingPulse 1.2s ease-in-out infinite;
 }
 @keyframes typingPulse{0%,100%{opacity:.9}50%{opacity:.35}}
 
-/* Chat region */
+/* Chat: only scroll area */
 .chat{
   flex:1;
   min-height:0;
@@ -161,25 +162,25 @@ body{
   scroll-behavior:smooth;
 }
 
-.chat-box::-webkit-scrollbar{width:6px}
+.chat-box::-webkit-scrollbar{ width:6px; }
 .chat-box::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,.14);
   border-radius: 999px;
 }
 
-/* Welcome */
 .welcome-message{
   border: 1px solid rgba(255,255,255,.08);
   background: rgba(255,255,255,.04);
   border-radius: var(--r20);
   padding: 18px;
-  text-align:left;
 }
+
 .welcome-message h2{
   font-size: 18px;
   font-weight: 900;
   margin-bottom: 6px;
 }
+
 .welcome-message p{
   font-size: 13px;
   color: var(--muted);
@@ -190,11 +191,12 @@ body{
   color: rgba(234,240,255,.55);
 }
 
-/* Messages (works with your JS structure) */
+/* Messages created by your JS */
 .message{
   display:flex;
   margin: 10px 0;
 }
+
 .message .message-content{
   max-width: min(78%, 440px);
   padding: 12px 12px;
@@ -207,9 +209,8 @@ body{
   overflow-wrap: anywhere;
 }
 
-/* You vs Stranger alignment */
-.message.you{justify-content:flex-end;}
-.message.stranger{justify-content:flex-start;}
+.message.you{ justify-content:flex-end; }
+.message.stranger{ justify-content:flex-start; }
 
 .message.you .message-content{
   background: linear-gradient(135deg, rgba(139,92,246,.28), rgba(34,211,238,.18));
@@ -224,7 +225,6 @@ body{
   border-bottom-left-radius: 6px;
 }
 
-/* System message */
 .system-message{
   margin: 14px 0;
   text-align:center;
@@ -255,12 +255,12 @@ body{
   outline:none;
   font-size: 14px;
 }
-#messageInput::placeholder{color: rgba(234,240,255,.45)}
+#messageInput::placeholder{ color: rgba(234,240,255,.45); }
 #messageInput:focus{
   border-color: rgba(34,211,238,.35);
   box-shadow: 0 0 0 4px rgba(34,211,238,.10);
 }
-#messageInput:disabled{opacity:.6; cursor:not-allowed;}
+#messageInput:disabled{ opacity:.6; cursor:not-allowed; }
 
 #sendBtn{
   padding: 12px 14px;
@@ -272,9 +272,9 @@ body{
   cursor:pointer;
   transition: transform .12s ease, filter .2s ease, opacity .2s ease;
 }
-#sendBtn:hover:not(:disabled){filter:brightness(1.05)}
-#sendBtn:active:not(:disabled){transform:scale(.98)}
-#sendBtn:disabled{opacity:.55; cursor:not-allowed;}
+#sendBtn:hover:not(:disabled){ filter:brightness(1.05); }
+#sendBtn:active:not(:disabled){ transform:scale(.98); }
+#sendBtn:disabled{ opacity:.55; cursor:not-allowed; }
 
 .action-buttons{
   display:flex;
@@ -301,13 +301,14 @@ body{
   background: rgba(34,211,238,.10);
   border-color: rgba(34,211,238,.22);
 }
+
 .secondary-btn{
   background: rgba(239,68,68,.10);
   border-color: rgba(239,68,68,.22);
 }
 
-.primary-btn:hover, .secondary-btn:hover{filter:brightness(1.08)}
-.primary-btn:active, .secondary-btn:active{transform:scale(.99)}
+.primary-btn:hover, .secondary-btn:hover{ filter:brightness(1.08); }
+.primary-btn:active, .secondary-btn:active{ transform:scale(.99); }
 
 .footer{
   margin-top: 10px;
@@ -318,11 +319,11 @@ body{
 
 /* Desktop polish */
 @media (min-width: 700px){
-  .app{padding: 22px;}
-  .container{height: min(92dvh, 820px);}
+  .app{ padding: 22px; }
+  .container{ height: min(92dvh, 820px); }
 }
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce){
-  *{transition:none!important; animation:none!important; scroll-behavior:auto!important;}
+  *{ transition:none!important; animation:none!important; scroll-behavior:auto!important; }
 }
