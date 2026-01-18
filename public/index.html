@@ -1,81 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#050814" />
-  <title>Anonymous Chat - Talk to Strangers</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Chat - Talk to Strangers</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <main class="app" role="application">
     <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="status-indicator"></div>
+                <h1>Anonymous Chat</h1>
+                <div class="online-counter" id="onlineCount">
+                    <span class="pulse-dot"></span>
+                    <span id="userCount">●●● Online</span>
+                </div>
+            </div>
+            <p class="tagline">Enter the shadows. Talk to strangers.</p>
+        </header>
 
-      <!-- TOP BAR -->
-      <header class="topbar">
-        <div class="brand">
-          <div class="logo" aria-hidden="true"></div>
-          <div class="brand-text">
-            <h1>Anonymous Chat</h1>
-            <p class="tagline">Connect with random strangers</p>
-          </div>
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">
+            <span id="statusText">Click "Start Chat" to enter</span>
+            <span id="typingIndicator" class="typing-indicator" style="display: none;">
+                Stranger is typing<span class="dots">...</span>
+            </span>
         </div>
 
-        <!-- IMPORTANT:
-             - id="statusBar" is required by your JS
-             - class includes "status-bar" because your JS overwrites className to 'status-bar'
-             - typingIndicator + statusText IDs are required
-        -->
-        <div class="status-bar" id="statusBar" role="status" aria-live="polite">
-          <span class="dot" aria-hidden="true"></span>
-          <span id="statusText">Click "Start Chat" to begin</span>
-          <span id="typingIndicator" class="typing-indicator" style="display:none;">
-            • Stranger is typing…
-          </span>
-        </div>
-      </header>
-
-      <!-- CHAT (scroll area) -->
-      <section class="chat">
+        <!-- Chat Box -->
         <div class="chat-box" id="chatBox">
-          <div class="welcome-message">
-            <h2>Welcome</h2>
-            <p>Click <b>Start</b> to get matched with a random stranger.</p>
-            <p class="note">Be respectful • Don’t share personal info</p>
-          </div>
+            <div class="welcome-message">
+                <div class="skull-icon">💀</div>
+                <h2>Welcome to the Shadows</h2>
+                <p>You are about to chat with a random stranger.</p>
+                <p class="warning">⚠️ Stay anonymous. Stay safe. Stay respectful.</p>
+                <p class="note">Your identity is hidden. So is theirs.</p>
+            </div>
         </div>
-      </section>
 
-      <!-- COMPOSER / CONTROLS -->
-      <section class="composer">
+        <!-- Input Area -->
         <div class="input-area">
-          <input
-            type="text"
-            id="messageInput"
-            placeholder="Message…"
-            autocomplete="off"
-            autocapitalize="sentences"
-            enterkeyhint="send"
-            disabled
-          />
-          <button id="sendBtn" disabled>Send</button>
+            <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="Type your message into the void..." 
+                disabled
+                autocomplete="off"
+            >
+            <button id="sendBtn" disabled>
+                <span class="send-icon">▶</span>
+            </button>
         </div>
 
+        <!-- Action Buttons -->
         <div class="action-buttons">
-          <button id="startBtn" class="primary-btn">Start</button>
-          <button id="nextBtn" class="secondary-btn" style="display:none;">Next</button>
+            <button id="startBtn" class="primary-btn">
+                <span class="btn-glow"></span>
+                <span class="btn-text">Enter Chat</span>
+            </button>
+            <button id="nextBtn" class="secondary-btn" style="display: none;">
+                <span class="btn-glow"></span>
+                <span class="btn-text">Next Stranger</span>
+            </button>
         </div>
 
-        <footer class="footer">
-          <p>Be nice. Be safe. Have fun!</p>
+        <!-- Footer -->
+        <footer>
+            <p>🌑 Anonymous • Encrypted • No logs • No traces</p>
         </footer>
-      </section>
-
     </div>
-  </main>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="script.js"></script>
+    <!-- Socket.io Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
