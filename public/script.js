@@ -117,14 +117,8 @@ function addMessage(text, sender) {
     
     messageDiv.appendChild(contentDiv);
     chatBox.appendChild(messageDiv);
-    function scrollToBottomIfNearEnd() {
-  const threshold = 120; // px
-  const distanceFromBottom = chatBox.scrollHeight - (chatBox.scrollTop + chatBox.clientHeight);
-  if (distanceFromBottom < threshold) {
     chatBox.scrollTop = chatBox.scrollHeight;
-  }
 }
-
 
 function addSystemMessage(text) {
     const messageDiv = document.createElement('div');
