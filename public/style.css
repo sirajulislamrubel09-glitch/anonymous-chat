@@ -120,10 +120,11 @@ header h1 {
     font-weight: 500;
 }
 
-/* Chat Box */
+/* Chat Box - ACCOUNTS FOR FIXED INPUT */
 .chat-box {
     flex: 1;
     padding: 16px;
+    padding-bottom: 80px;
     overflow-y: auto;
     overflow-x: hidden;
     background: rgba(10, 1, 24, 0.3);
@@ -359,29 +360,37 @@ header h1 {
     30% { transform: translateY(-8px); opacity: 1; }
 }
 
-/* Input Area */
+/* Input Area - FIXED TO BOTTOM, ADJUSTS WITH KEYBOARD */
 .input-area {
-    padding: 12px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(16, 0, 43, 0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(123, 44, 191, 0.2);
-    flex-shrink: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 16px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    background: rgba(16, 0, 43, 0.98);
+    backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(123, 44, 191, 0.3);
+    z-index: 100;
+    transition: transform 0.2s ease;
 }
 
 .input-wrapper {
     display: flex;
     align-items: flex-end;
     gap: 8px;
-    padding: 8px 12px;
-    background: rgba(26, 11, 46, 0.6);
-    border: 1.5px solid rgba(123, 44, 191, 0.3);
+    padding: 6px 8px 6px 16px;
+    background: rgba(26, 11, 46, 0.8);
+    border: 1.5px solid rgba(123, 44, 191, 0.4);
     border-radius: 24px;
-    transition: border-color 0.2s ease;
+    transition: all 0.2s ease;
+    max-width: 100%;
 }
 
 .input-wrapper:focus-within {
     border-color: var(--purple-primary);
+    background: rgba(26, 11, 46, 0.95);
+    box-shadow: 0 0 20px rgba(123, 44, 191, 0.2);
 }
 
 #messageInput {
@@ -390,15 +399,18 @@ header h1 {
     border: none;
     outline: none;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 15px;
     font-family: inherit;
     resize: none;
-    max-height: 100px;
+    max-height: 120px;
+    min-height: 20px;
     line-height: 1.4;
+    padding: 6px 0;
 }
 
 #messageInput::placeholder {
     color: var(--text-secondary);
+    opacity: 0.7;
 }
 
 #messageInput:disabled {
@@ -406,9 +418,10 @@ header h1 {
 }
 
 .send-btn {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     padding: 0;
+    margin-left: 4px;
     border: none;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
@@ -417,30 +430,36 @@ header h1 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.2s ease;
+    transition: all 0.15s ease;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
+    box-shadow: 0 4px 16px rgba(123, 44, 191, 0.4);
 }
 
 .send-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.3;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .send-btn:active:not(:disabled) {
-    transform: scale(0.92);
+    transform: scale(0.9);
+    box-shadow: 0 2px 8px rgba(123, 44, 191, 0.6);
 }
 
-/* Action Bar */
+/* Action Bar - MOVED ABOVE INPUT */
 .action-bar {
     display: flex;
     gap: 10px;
     padding: 12px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(16, 0, 43, 0.95);
+    background: rgba(16, 0, 43, 0.98);
     backdrop-filter: blur(10px);
     border-top: 1px solid rgba(123, 44, 191, 0.15);
     flex-shrink: 0;
+    position: fixed;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    z-index: 99;
 }
 
 .action-btn {
