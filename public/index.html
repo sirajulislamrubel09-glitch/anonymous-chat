@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Chat - Talk to Strangers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Anonymous Chat</h1>
+            <p class="tagline">Connect with random strangers instantly</p>
+        </header>
+
+        <div class="status-bar" id="statusBar">
+            <span id="statusText">Click "Start Chat" to begin</span>
+            <span id="typingIndicator" class="typing-indicator" style="display: none;">Stranger is typing...</span>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <div class="welcome-message">
+                <h2>👋 Welcome!</h2>
+                <p>Click the button below to start chatting with a random stranger.</p>
+                <p class="note">Stay respectful and be kind! 💙</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="Type your message..." 
+                disabled
+            >
+            <button id="sendBtn" disabled>Send</button>
+        </div>
+
+        <div class="action-buttons">
+            <button id="startBtn" class="primary-btn">Start Chat</button>
+            <button id="nextBtn" class="secondary-btn" style="display: none;">Next Stranger</button>
+        </div>
+
+        <footer>
+            <p>Be nice. Be safe. Have fun! 🎉</p>
+        </footer>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
