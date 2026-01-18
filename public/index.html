@@ -9,38 +9,43 @@
 </head>
 
 <body>
-  <!-- App wrapper prevents weird body scroll + iOS address-bar jump -->
-  <main class="app" role="application">
-    <div class="container">
-      <header>
-        <h1>Anonymous Chat</h1>
-        <p class="tagline">Connect with random strangers instantly</p>
+  <main class="app">
+    <div class="container" role="application">
+      
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div class="brand-text">
+            <h1>Anonymous Chat</h1>
+            <p class="tagline">Talk to strangers. Stay safe.</p>
+          </div>
+        </div>
+
+        <div class="status-pill" id="statusBar" role="status" aria-live="polite">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="statusText">Click "Start Chat" to begin</span>
+          <span id="typingIndicator" class="typing-indicator" style="display:none;">
+            • Stranger is typing…
+          </span>
+        </div>
       </header>
 
-      <div class="status-bar" id="statusBar" role="status" aria-live="polite">
-        <span id="statusText">Click "Start Chat" to begin</span>
-        <span id="typingIndicator" class="typing-indicator" style="display:none;">
-          Stranger is typing...
-        </span>
-      </div>
-
-      <!-- This MUST be the scroll area -->
-      <section class="chat-box" id="chatBox" aria-label="Chat messages">
-        <div class="welcome-message">
-          <h2>👋 Welcome!</h2>
-          <p>Click the button below to start chatting with a random stranger.</p>
-          <p class="note">Stay respectful and be kind! 💙</p>
+      <section class="chat" aria-label="Chat area">
+        <div class="chat-box" id="chatBox">
+          <div class="welcome-message">
+            <h2>Welcome</h2>
+            <p>Start a chat and get paired with a random stranger.</p>
+            <p class="note">No accounts. No profiles. Just conversation.</p>
+          </div>
         </div>
       </section>
 
-      <!-- Sticky bottom controls grouped together -->
-      <section class="bottom-bar" aria-label="Chat controls">
+      <section class="composer" aria-label="Message composer">
         <div class="input-area">
           <input
             type="text"
             id="messageInput"
-            placeholder="Type your message..."
-            inputmode="text"
+            placeholder="Message…"
             autocomplete="off"
             autocapitalize="sentences"
             enterkeyhint="send"
@@ -50,20 +55,20 @@
         </div>
 
         <div class="action-buttons">
-          <button id="startBtn" class="primary-btn">Start Chat</button>
-          <button id="nextBtn" class="secondary-btn" style="display:none;">
-            Next Stranger
-          </button>
+          <button id="startBtn" class="primary-btn">Start</button>
+          <button id="nextBtn" class="secondary-btn" style="display:none;">Next</button>
         </div>
 
-        <footer>
-          <p>Be nice. Be safe. Have fun! 🎉</p>
+        <footer class="footer">
+          <p>Be respectful • Don’t share personal info</p>
         </footer>
       </section>
+
     </div>
   </main>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
