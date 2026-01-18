@@ -15,10 +15,10 @@ const statusSubtext = document.getElementById('statusSubtext');
 let isConnected = false;
 let typingTimeout;
 
-// Auto-resize textarea
+// Auto-resize textarea and handle keyboard
 messageInput.addEventListener('input', () => {
     messageInput.style.height = 'auto';
-    messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+    messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
     
     // Enable/disable send button based on input
     if (messageInput.value.trim() && isConnected) {
@@ -34,6 +34,29 @@ messageInput.addEventListener('input', () => {
         typingTimeout = setTimeout(() => {
             socket.emit('stop-typing');
         }, 1000);
+    }
+});
+
+// Scroll chat when keyboard opens
+messageInput.addEventListener('focus', () => {
+    setTimeout(() => {
+        scrollToBottom();
+    }, 300);
+});
+
+// Adjust layout when keyboard shows/hides
+window.visualViewport?.addEventListener('resize', () => {
+    const viewportHeight = window.visualViewport.height;
+    const windowHeight = window.innerHeight;
+    const keyboardHeight = windowHeight - viewportHeight;
+    
+    if (keyboardHeight > 100) {
+        // Keyboard is open
+        document.querySelector('.action-bar').style.display = 'none';
+        setTimeout(scrollToBottom, 100);
+    } else {
+        // Keyboard is closed
+        document.querySelector('.action-bar').style.display = 'flex';
     }
 });
 
