@@ -7,51 +7,29 @@ const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
 const startBtn = document.getElementById('startBtn');
 const nextBtn = document.getElementById('nextBtn');
-const statusBar = document.getElementById('statusBar');
-const statusText = document.getElementById('statusText');
-const typingIndicator = document.getElementById('typingIndicator');
+const typingBubble = document.getElementById('typingBubble');
+const statusDot = document.getElementById('statusDot');
+const statusSubtext = document.getElementById('statusSubtext');
 
 // State
 let isConnected = false;
 let typingTimeout;
 
-// Start chat button
-startBtn.addEventListener('click', () => {
-    socket.emit('find-partner');
-    startBtn.style.display = 'none';
-    clearChat();
-    addSystemMessage('🔍 Searching for a stranger in the shadows...');
-    updateStatus('Looking for someone...', 'waiting');
-});
-
-// Next button (find new partner)
-nextBtn.addEventListener('click', () => {
-    socket.emit('next-partner');
-    nextBtn.style.display = 'none';
-    startBtn.style.display = 'block';
-    messageInput.disabled = true;
-    sendBtn.disabled = true;
-    isConnected = false;
-    clearChat();
-    addSystemMessage('👻 You left the chat. Click "Enter Chat" to find someone new.');
-    updateStatus('Click "Enter Chat" to begin', '');
-});
-
-// Send message button
-sendBtn.addEventListener('click', sendMessage);
-
-// Send message on Enter key
-messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !messageInput.disabled) {
-        sendMessage();
-    }
-});
-
-// Typing indicator
+// Auto-resize textarea
 messageInput.addEventListener('input', () => {
-    if (isConnected) {
+    messageInput.style.height = 'auto';
+    messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+    
+    // Enable/disable send button based on input
+    if (messageInput.value.trim() && isConnected) {
+        sendBtn.disabled = false;
+    } else {
+        sendBtn.disabled = true;
+    }
+    
+    // Send typing indicator
+    if (isConnected && messageInput.value.trim()) {
         socket.emit('typing');
-        
         clearTimeout(typingTimeout);
         typingTimeout = setTimeout(() => {
             socket.emit('stop-typing');
@@ -59,55 +37,85 @@ messageInput.addEventListener('input', () => {
     }
 });
 
-// Function to send message
+// Start chat button
+startBtn.addEventListener('click', () => {
+    socket.emit('find-partner');
+    startBtn.style.display = 'none';
+    clearChat();
+    addSystemMessage('🔍 Searching for a stranger...');
+    updateStatus('Searching...', false);
+});
+
+// Next button (find new partner)
+nextBtn.addEventListener('click', () => {
+    socket.emit('next-partner');
+    nextBtn.style.display = 'none';
+    startBtn.style.display = 'flex';
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+    isConnected = false;
+    clearChat();
+    addSystemMessage('You left the chat');
+    updateStatus('Offline', false);
+});
+
+// Send message
+sendBtn.addEventListener('click', sendMessage);
+
+messageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !messageInput.disabled) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
 function sendMessage() {
     const message = messageInput.value.trim();
-    if (message && isConnected) {
-        // Add message to chat
-        addMessage(message, 'you');
-        
-        // Send to server
-        socket.emit('send-message', message);
-        
-        // Clear input
-        messageInput.value = '';
-        messageInput.focus();
-    }
+    if (!message || !isConnected) return;
+    
+    // Add message with timestamp and status
+    addMessage(message, 'you', true);
+    
+    // Send to server
+    socket.emit('send-message', message);
+    
+    // Clear input
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    messageInput.focus();
 }
 
 // Socket events
 socket.on('waiting', () => {
-    updateStatus('⏳ Waiting for a stranger...', 'waiting');
+    updateStatus('Waiting...', false);
 });
 
 socket.on('partner-found', () => {
     isConnected = true;
     clearChat();
-    addSystemMessage('✨ Stranger connected! You are now chatting anonymously.');
-    updateStatus('🟢 Connected to stranger', 'connected');
+    addSystemMessage('✨ Stranger connected!');
+    updateStatus('Online', true);
     
     // Enable input
     messageInput.disabled = false;
-    sendBtn.disabled = false;
     messageInput.focus();
     
     // Show next button
-    nextBtn.style.display = 'block';
+    nextBtn.style.display = 'flex';
     startBtn.style.display = 'none';
 });
 
 socket.on('receive-message', (message) => {
-    addMessage(message, 'stranger');
-    typingIndicator.style.display = 'none';
-    
-    // Play notification sound (optional)
+    addMessage(message, 'stranger', true);
+    hideTypingIndicator();
     playNotificationSound();
 });
 
 socket.on('partner-disconnected', () => {
     isConnected = false;
-    addSystemMessage('💔 Stranger has disconnected.');
-    updateStatus('Stranger left the chat', '');
+    addSystemMessage('💔 Stranger disconnected');
+    updateStatus('Offline', false);
     
     // Disable input
     messageInput.disabled = true;
@@ -115,37 +123,74 @@ socket.on('partner-disconnected', () => {
     
     // Show start button
     nextBtn.style.display = 'none';
-    startBtn.style.display = 'block';
+    startBtn.style.display = 'flex';
+    
+    hideTypingIndicator();
 });
 
 socket.on('disconnected', () => {
     isConnected = false;
-    updateStatus('Click "Enter Chat" to find someone new', '');
+    updateStatus('Offline', false);
     messageInput.disabled = true;
     sendBtn.disabled = true;
+    hideTypingIndicator();
 });
 
 socket.on('partner-typing', () => {
-    typingIndicator.style.display = 'inline';
+    showTypingIndicator();
 });
 
 socket.on('partner-stop-typing', () => {
-    typingIndicator.style.display = 'none';
+    hideTypingIndicator();
 });
 
 // Helper functions
-function addMessage(text, sender) {
+function addMessage(text, sender, showTime = true) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}`;
     
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    contentDiv.textContent = text;
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = 'message-bubble';
+    bubbleDiv.textContent = text;
     
-    messageDiv.appendChild(contentDiv);
+    messageDiv.appendChild(bubbleDiv);
+    
+    // Add timestamp and status
+    if (showTime) {
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'message-meta';
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'message-time';
+        timeSpan.textContent = getCurrentTime();
+        metaDiv.appendChild(timeSpan);
+        
+        // Add delivery status for "you" messages
+        if (sender === 'you') {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'message-status';
+            statusDiv.innerHTML = `
+                <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <svg class="checkmark read" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            `;
+            metaDiv.appendChild(statusDiv);
+            
+            // Animate checkmarks
+            setTimeout(() => {
+                statusDiv.querySelectorAll('.checkmark').forEach(check => {
+                    check.style.animation = 'fadeIn 0.3s ease-out';
+                });
+            }, 300);
+        }
+        
+        messageDiv.appendChild(metaDiv);
+    }
+    
     chatBox.appendChild(messageDiv);
-    
-    // Scroll to bottom
     scrollToBottom();
 }
 
@@ -154,8 +199,6 @@ function addSystemMessage(text) {
     messageDiv.className = 'system-message';
     messageDiv.textContent = text;
     chatBox.appendChild(messageDiv);
-    
-    // Scroll to bottom
     scrollToBottom();
 }
 
@@ -163,22 +206,42 @@ function clearChat() {
     chatBox.innerHTML = '';
 }
 
-function updateStatus(text, className) {
-    statusText.textContent = text;
-    statusBar.className = 'status-bar';
-    if (className) {
-        statusBar.classList.add(className);
+function updateStatus(text, online) {
+    statusSubtext.textContent = text;
+    if (online) {
+        statusDot.classList.add('online');
+    } else {
+        statusDot.classList.remove('online');
     }
 }
 
-function scrollToBottom() {
-    chatBox.scrollTop = chatBox.scrollHeight;
+function showTypingIndicator() {
+    typingBubble.style.display = 'block';
+    scrollToBottom();
 }
 
-// Optional: Play notification sound when message received
+function hideTypingIndicator() {
+    typingBubble.style.display = 'none';
+}
+
+function scrollToBottom() {
+    setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }, 100);
+}
+
+function getCurrentTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours}:${minutes} ${ampm}`;
+}
+
 function playNotificationSound() {
-    // You can add a subtle beep sound here
-    // For now, we'll use the Web Audio API to create a simple beep
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
@@ -190,34 +253,15 @@ function playNotificationSound() {
         oscillator.frequency.value = 800;
         oscillator.type = 'sine';
         
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
         
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.1);
     } catch (e) {
-        // Silently fail if audio context is not supported
+        // Silent fail
     }
 }
-
-// Update online counter (simulated - you can make this real later)
-function updateOnlineCount() {
-    const userCountElement = document.getElementById('userCount');
-    if (userCountElement) {
-        // Random number between 50-200 for demo purposes
-        const count = Math.floor(Math.random() * 150) + 50;
-        userCountElement.textContent = `${count} Online`;
-    }
-}
-
-// Update online count every 10 seconds
-setInterval(updateOnlineCount, 10000);
-updateOnlineCount(); // Initial call
-
-// Focus input when page loads
-window.addEventListener('load', () => {
-    messageInput.focus();
-});
 
 // Prevent accidental page refresh
 window.addEventListener('beforeunload', (e) => {
@@ -225,5 +269,12 @@ window.addEventListener('beforeunload', (e) => {
         e.preventDefault();
         e.returnValue = 'You are currently chatting. Are you sure you want to leave?';
         return e.returnValue;
+    }
+});
+
+// Focus input on load
+window.addEventListener('load', () => {
+    if (!messageInput.disabled) {
+        messageInput.focus();
     }
 });
