@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Anonymous Chat - Talk to Strangers</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,65 +11,89 @@
         <!-- Header -->
         <header>
             <div class="header-content">
-                <div class="status-indicator"></div>
-                <h1>Anonymous Chat</h1>
-                <div class="online-counter" id="onlineCount">
-                    <span class="pulse-dot"></span>
-                    <span id="userCount">●●● Online</span>
+                <div class="status-dot online" id="statusDot"></div>
+                <div class="header-text">
+                    <h1>Anonymous Chat</h1>
+                    <p class="status-subtext" id="statusSubtext">Offline</p>
                 </div>
             </div>
-            <p class="tagline">Enter the shadows. Talk to strangers.</p>
         </header>
-
-        <!-- Status Bar -->
-        <div class="status-bar" id="statusBar">
-            <span id="statusText">Click "Start Chat" to enter</span>
-            <span id="typingIndicator" class="typing-indicator" style="display: none;">
-                Stranger is typing<span class="dots">...</span>
-            </span>
-        </div>
 
         <!-- Chat Box -->
         <div class="chat-box" id="chatBox">
-            <div class="welcome-message">
-                <div class="skull-icon">💀</div>
-                <h2>Welcome to the Shadows</h2>
-                <p>You are about to chat with a random stranger.</p>
-                <p class="warning">⚠️ Stay anonymous. Stay safe. Stay respectful.</p>
-                <p class="note">Your identity is hidden. So is theirs.</p>
+            <div class="welcome-screen">
+                <div class="welcome-icon">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <h2>Connect Anonymously</h2>
+                <p class="welcome-desc">Chat with random strangers from around the world</p>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">🔒</span>
+                        <span>Fully Anonymous</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <span>Instant Connection</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💬</span>
+                        <span>No Registration</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator (hidden by default) -->
+        <div class="typing-bubble" id="typingBubble" style="display: none;">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
 
         <!-- Input Area -->
         <div class="input-area">
-            <input 
-                type="text" 
-                id="messageInput" 
-                placeholder="Type your message into the void..." 
-                disabled
-                autocomplete="off"
-            >
-            <button id="sendBtn" disabled>
-                <span class="send-icon">▶</span>
-            </button>
+            <div class="input-wrapper">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Type a message..." 
+                    rows="1"
+                    disabled
+                    autocomplete="off"
+                ></textarea>
+                <button id="sendBtn" disabled class="send-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button id="startBtn" class="primary-btn">
-                <span class="btn-glow"></span>
-                <span class="btn-text">Enter Chat</span>
+        <div class="action-bar">
+            <button id="startBtn" class="action-btn primary">
+                <span class="btn-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8"/>
+                    </svg>
+                </span>
+                <span>Start Chat</span>
             </button>
-            <button id="nextBtn" class="secondary-btn" style="display: none;">
-                <span class="btn-glow"></span>
-                <span class="btn-text">Next Stranger</span>
+            <button id="nextBtn" class="action-btn secondary" style="display: none;">
+                <span class="btn-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="13 17 18 12 13 7"/>
+                        <polyline points="6 17 11 12 6 7"/>
+                    </svg>
+                </span>
+                <span>Next</span>
             </button>
         </div>
-
-        <!-- Footer -->
-        <footer>
-            <p>🌑 Anonymous • Encrypted • No logs • No traces</p>
-        </footer>
     </div>
 
     <!-- Socket.io Client -->
