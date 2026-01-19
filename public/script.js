@@ -52,11 +52,13 @@ window.visualViewport?.addEventListener('resize', () => {
     
     if (keyboardHeight > 100) {
         // Keyboard is open
-        document.querySelector('.action-bar').style.display = 'none';
+        const actionBar = document.querySelector('.action-bar');
+        if (actionBar) actionBar.style.display = 'none';
         setTimeout(scrollToBottom, 100);
     } else {
         // Keyboard is closed
-        document.querySelector('.action-bar').style.display = 'flex';
+        const actionBar = document.querySelector('.action-bar');
+        if (actionBar) actionBar.style.display = 'flex';
     }
 });
 
