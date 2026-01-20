@@ -7,18 +7,48 @@ const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
 const startBtn = document.getElementById('startBtn');
 const nextBtn = document.getElementById('nextBtn');
+const cockpitStartBtn = document.getElementById('cockpitStartBtn');
+const cockpitNextBtn = document.getElementById('cockpitNextBtn');
+const overlay = document.querySelector('.cockpit-overlay-controls');
 const typingBubble = document.getElementById('typingBubble');
 const statusDot = document.getElementById('statusDot');
 const statusSubtext = document.getElementById('statusSubtext');
+const resetBtn = document.getElementById('resetBtn');
 
 // State
 let isConnected = false;
 let typingTimeout;
 
+// Initialization
+cockpitStartBtn.addEventListener('click', () => {
+    socket.emit('find-partner');
+    overlay.style.display = 'none';
+    clearChat();
+    addSystemMessage('SEARCHING NEURAL NETWORK...');
+    updateStatus('Searching...', false);
+});
+
+cockpitNextBtn.addEventListener('click', () => {
+    socket.emit('next-partner');
+    overlay.style.display = 'flex';
+    cockpitNextBtn.style.display = 'none';
+    cockpitStartBtn.style.display = 'block';
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+    isConnected = false;
+    clearChat();
+    addSystemMessage('DISCONNECTED');
+    updateStatus('Offline', false);
+});
+
+resetBtn.addEventListener('click', () => {
+    location.reload();
+});
+
 // Auto-resize textarea and handle keyboard
 messageInput.addEventListener('input', () => {
     messageInput.style.height = 'auto';
-    messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+    messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
     
     // Enable/disable send button based on input
     if (messageInput.value.trim() && isConnected) {
@@ -44,49 +74,65 @@ messageInput.addEventListener('focus', () => {
     }, 300);
 });
 
-// Adjust layout when keyboard shows/hides
-window.visualViewport?.addEventListener('resize', () => {
-    const viewportHeight = window.visualViewport.height;
-    const windowHeight = window.innerHeight;
-    const keyboardHeight = windowHeight - viewportHeight;
-    
-    if (keyboardHeight > 100) {
-        // Keyboard is open
-        const actionBar = document.querySelector('.action-bar');
-        if (actionBar) actionBar.style.display = 'none';
-        setTimeout(scrollToBottom, 100);
-    } else {
-        // Keyboard is closed
-        const actionBar = document.querySelector('.action-bar');
-        if (actionBar) actionBar.style.display = 'flex';
-    }
+// Socket events
+socket.on('waiting', () => {
+    updateStatus('Awaiting Signal...', false);
 });
 
-// Start chat button
-startBtn.addEventListener('click', () => {
-    socket.emit('find-partner');
-    startBtn.style.display = 'none';
+socket.on('partner-found', () => {
+    isConnected = true;
+    overlay.style.display = 'none';
     clearChat();
-    addSystemMessage('🔍 Searching for a stranger...');
-    updateStatus('Searching...', false);
+    addSystemMessage('CONNECTION ESTABLISHED');
+    updateStatus('Linked', true);
+    
+    // Enable input
+    messageInput.disabled = false;
+    messageInput.focus();
+    
+    // Show next button in overlay
+    cockpitNextBtn.style.display = 'block';
+    cockpitStartBtn.style.display = 'none';
 });
 
-// Next button (find new partner)
-nextBtn.addEventListener('click', () => {
-    socket.emit('next-partner');
-    nextBtn.style.display = 'none';
-    startBtn.style.display = 'flex';
+socket.on('receive-message', (message) => {
+    addMessage(message, 'stranger', true);
+    hideTypingIndicator();
+    playNotificationSound();
+});
+
+socket.on('partner-disconnected', () => {
+    isConnected = false;
+    addSystemMessage('LINK LOST');
+    updateStatus('Offline', false);
+    
+    // Disable input
     messageInput.disabled = true;
     sendBtn.disabled = true;
-    isConnected = false;
-    clearChat();
-    addSystemMessage('You left the chat');
-    updateStatus('Offline', false);
+    
+    // Show overlay with start button
+    overlay.style.display = 'flex';
+    cockpitNextBtn.style.display = 'none';
+    cockpitStartBtn.style.display = 'block';
+    
+    hideTypingIndicator();
 });
 
-// Send message
-sendBtn.addEventListener('click', sendMessage);
+// Modify existing sendMessage to use cockpit logic
+function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message || !isConnected) return;
+    
+    addMessage(message, 'you', true);
+    socket.emit('send-message', message);
+    
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    messageInput.focus();
+}
 
+sendBtn.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && !messageInput.disabled) {
         e.preventDefault();
@@ -94,22 +140,6 @@ messageInput.addEventListener('keydown', (e) => {
     }
 });
 
-function sendMessage() {
-    const message = messageInput.value.trim();
-    if (!message || !isConnected) return;
-    
-    // Add message with timestamp and status
-    addMessage(message, 'you', true);
-    
-    // Send to server
-    socket.emit('send-message', message);
-    
-    // Clear input
-    messageInput.value = '';
-    messageInput.style.height = 'auto';
-    sendBtn.disabled = true;
-    messageInput.focus();
-}
 
 // Socket events
 socket.on('waiting', () => {
