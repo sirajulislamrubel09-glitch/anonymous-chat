@@ -2,87 +2,110 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Anonymous Chat | Cyber-Glass</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Anonymous Chat - Vaultify</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="neural-glow"></div>
+
     <div class="container">
-        <!-- Header -->
         <header class="glass-header">
             <div class="header-content">
                 <div class="status-dot online" id="statusDot"></div>
                 <div class="header-text">
-                    <h1>Cyber Chat</h1>
-                    <p class="status-subtext" id="statusSubtext">System Ready</p>
+                    <h1>Vaultify</h1>
+                    <div class="status-subtext" id="statusText">Disconnected</div>
                 </div>
+            </div>
+            <div class="header-actions">
+                <button class="reset-text-btn" id="stopBtn" style="display: none;">End</button>
             </div>
         </header>
 
-        <!-- Chat Box -->
         <div class="chat-box" id="chatBox">
-            <div class="welcome-screen">
-                <div class="welcome-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2a10 10 0 1 0 10 10H12V2zM12 12L2.7 7.35"/>
-                        <path d="M12 12l5.3 9.2"/>
-                    </svg>
-                </div>
-                <h2>Cyber-Glass</h2>
-                <p class="welcome-desc">Connect to the anonymous neural network.</p>
-            </div>
+            <!-- Messages will appear here -->
         </div>
 
-        <div class="typing-bubble" id="typingBubble" style="display: none;">
-            <div class="typing-dots">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-
-        <!-- Input Cockpit -->
-        <div class="input-cockpit">
+        <div class="input-cockpit" id="inputCockpit" style="display: none;">
             <div class="cockpit-controls">
                 <div class="enhance-toggle">
-                    <span>Enhance</span>
                     <label class="switch">
-                        <input type="checkbox">
+                        <input type="checkbox" id="enhanceToggle" checked>
                         <span class="slider"></span>
                     </label>
+                    <span>Secure Encrypt</span>
                 </div>
-                <button id="resetBtn" class="reset-text-btn">Reset</button>
+                <button class="reset-text-btn" id="clearBtn">Clear</button>
             </div>
             <div class="cockpit-input-row">
-                <textarea 
-                    id="messageInput" 
-                    placeholder="Enter frequency..." 
-                    rows="1"
-                    disabled
-                ></textarea>
-                <button id="sendBtn" disabled class="cockpit-send-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
+                <textarea id="messageInput" placeholder="Secure message..." rows="1"></textarea>
+                <button id="sendBtn" class="cockpit-send-btn" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
             </div>
         </div>
 
-        <!-- Action Bar (Hidden in new cockpit design, but kept for script logic) -->
-        <div class="action-bar" style="display: none;">
-            <button id="startBtn" class="action-btn primary">Start</button>
+        <div id="controls" style="display: none;">
             <button id="nextBtn" class="action-btn secondary">Next</button>
         </div>
         
-        <!-- Re-adding Start/Next buttons to cockpit logic or as floating buttons -->
-        <div class="cockpit-overlay-controls">
-             <button id="cockpitStartBtn" class="cockpit-main-btn">Initialize Connection</button>
-             <button id="cockpitNextBtn" class="cockpit-main-btn next" style="display: none;">Next Frequency</button>
+        <div class="cockpit-overlay-controls" id="welcomeScreen">
+             <div class="ai-bg" aria-hidden="true">
+                <div class="glow"></div>
+                <div class="glow g2"></div>
+                <div class="grid"></div>
+                <div class="nodes"></div>
+
+                <div class="floaters">
+                  <div class="chip c1" style="--r:-10deg"><i class="fa-solid fa-microchip"></i></div>
+                  <div class="chip c2" style="--r:12deg"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                  <div class="chip c3" style="--r:8deg"><i class="fa-solid fa-brain"></i></div>
+                  <div class="chip c4" style="--r:-6deg"><i class="fa-solid fa-sitemap"></i></div>
+                </div>
+              </div>
+
+              <div class="wrap">
+                <div class="card">
+                  <div class="blob" aria-hidden="true"></div>
+
+                  <div class="content">
+                    <div class="topline">
+                      <div class="brand">
+                        <div class="brand-badge" aria-hidden="true">
+                          <i class="fa-solid fa-vault"></i>
+                        </div>
+                        <div>
+                          <div class="brand-name">Vaultify</div>
+                          <div class="brand-sub">Secure Chat</div>
+                        </div>
+                      </div>
+
+                      <div class="status" role="status" aria-live="polite">
+                        <span class="dot" style="background:#22c55e; box-shadow:0 0 0 4px rgba(34,197,94,.18);" aria-hidden="true"></span>
+                        Ready
+                      </div>
+                    </div>
+
+                    <h1 class="vault-title-h1">Vaultify</h1>
+                    <div class="sub">
+                      Connect instantly with strangers around the world in our secure AI-encrypted vault. Your privacy is our priority.
+                    </div>
+
+                    <button class="btn" id="startBtn">
+                      <span id="btnText">Initiate Connection</span>
+                      <div class="spinner" id="loader"></div>
+                    </button>
+
+                    <div class="foot">Encrypted connection will be established immediately.</div>
+                  </div>
+                </div>
+              </div>
         </div>
     </div>
 
-    <!-- Socket.io Client -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
