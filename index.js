@@ -15,7 +15,7 @@ const activePairs = new Map();
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on('find-partner', () => {
+  socket.on('start', () => {
     if (waitingUser && waitingUser !== socket.id) {
       const partnerId = waitingUser;
       activePairs.set(socket.id, partnerId);
@@ -31,6 +31,16 @@ io.on('connection', (socket) => {
       socket.emit('waiting');
       console.log('Waiting:', socket.id);
     }
+  });
+
+  socket.on('stop', () => {
+    const partnerId = activePairs.get(socket.id);
+    if (partnerId) {
+      io.to(partnerId).emit('partner-disconnected');
+      activePairs.delete(partnerId);
+    }
+    activePairs.delete(socket.id);
+    socket.emit('disconnected');
   });
 
   socket.on('send-message', (message) => {
@@ -80,7 +90,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
